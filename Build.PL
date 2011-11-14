@@ -12,9 +12,8 @@ my $build = Module::Build->new(
     },
     configure_requires   => { 'Module::Build' => '0.38' },
     requires             => {
-        # 'Exporter'                      => '0',
-        'parent'                        => '0',
-        # 'Plack'                         => '0.9949',
+        'Amon2'                         => '3.25',
+        'Data::Section::Simple'         => '0.03',
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
