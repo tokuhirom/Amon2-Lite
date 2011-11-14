@@ -9,3 +9,7 @@ xt/03_pod.t
 xt/04_minimum_version.t
 xt/05_cpan_meta.t
 xt/06_meta_author.t
+README
+LICENSE
+META.yml
+META.json

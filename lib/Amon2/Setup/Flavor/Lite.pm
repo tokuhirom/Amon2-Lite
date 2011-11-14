@@ -4,9 +4,14 @@ use utf8;
 
 package Amon2::Setup::Flavor::Lite;
 use parent qw/Amon2::Setup::Flavor/;
+use Amon2::Lite;
+use Amon2;
 
 sub run {
     my ($self) = @_;
+
+    $self->{amon2_version}      = $Amon2::VERSION;
+    $self->{amon2_lite_version} = $Amon2::Lite::VERSION;
 
     $self->write_file('app.psgi', <<'...');
 use strict;
@@ -83,8 +88,8 @@ WriteMakefile(
     VERSION_FROM  => 'app.psgi',
     PREREQ_PM     => {
         'Amon2'                           => '<% $amon2_version %>',
+        'Amon2::Lite'                     => '<% $amon2_lite_version %>',
         'Text::Xslate'                    => '1.5006',
-        'Plack::Middleware::ReverseProxy' => '0.09',
         'Time::Piece'                     => '1.20',
         'HTML::FillInForm::Lite'          => '1.09',
         'Plack::Session'                  => '0.14',
