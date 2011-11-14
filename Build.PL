@@ -14,6 +14,7 @@ my $build = Module::Build->new(
     requires             => {
         'Amon2'                         => '3.25',
         'Data::Section::Simple'         => '0.03',
+        perl                            => '5.008008',
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
