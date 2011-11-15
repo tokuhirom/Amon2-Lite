@@ -15,6 +15,7 @@ my $build = Module::Build->new(
         'Amon2'                         => '3.25',
         'Data::Section::Simple'         => '0.03',
         perl                            => '5.008008',
+        'Text::Xslate::Bridge::TT2Like' => '0.00010',
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
