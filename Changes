@@ -1,4 +1,9 @@
 Revision history for Perl extension Amon2::Lite
 
+0.02
+
+    - fixed incompatibility with latest Amon2::Lite.
+      Amon2::Lite should not be use Bridge::Star.
+
 0.01    Mon Nov 14 09:24:15 2011
     - original version
