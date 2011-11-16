@@ -13,6 +13,8 @@ t/400_lite/01_simple.t
 t/400_lite/02_plugin.psgi
 t/400_lite/02_plugin.t
 t/400_lite/03_kolon.t
+t/400_lite/03_kolon_simple.t
+t/400_lite/04_template_options.t
 t/400_lite/04_tmt.t
 t/TestFlavor.pm
 t/tmpl/foo.mt
