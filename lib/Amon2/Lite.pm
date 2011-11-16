@@ -70,10 +70,14 @@ sub import {
 
     my $tmpl_dir = File::Spec->catdir(dirname((caller(0))[1]), 'tmpl');
     *{"${base_class}::create_view"} = sub {
+        $base_class->template_options();
+    };
+    *{"${base_class}::template_options"} = sub {
+        my ($class, %options) = @_;
+
         # using lazy loading to read __DATA__ section.
         my $vpath = Data::Section::Simple->new($caller)->get_data_section();
-        my $config = $caller->config->{'Text::Xslate'} || +{};
-        my $xslate = Text::Xslate->new(+{
+        my %params = (
             'syntax'   => 'TTerse',
             'module'   => [ 'Text::Xslate::Bridge::TT2Like' ],
             'path'     => [ $vpath, $tmpl_dir ],
@@ -82,8 +86,30 @@ sub import {
                 uri_with => sub { Amon2->context()->req->uri_with(@_) },
                 uri_for  => sub { Amon2->context()->uri_for(@_) },
             },
-            %$config,
-        });
+        );
+        my $merge = sub {
+            my ($stuff) = @_;
+            for (qw(module path)) {
+                if ($stuff->{$_}) {
+                    unshift @{$params{$_}}, @{delete $stuff->{$_}};
+                }
+            }
+            for (qw(function)) {
+                if ($stuff->{$_}) {
+                    $params{$_} = +{ %{$params{$_}}, %{delete $stuff->{$_}} };
+                }
+            }
+            while (my ($k, $v) = each %$stuff) {
+                $params{$k} = $v;
+            }
+        };
+        if (my $config = $caller->config->{'Text::Xslate'}) {
+            $merge->($config);
+        }
+        if (%options) {
+            $merge->(\%options);
+        }
+        my $xslate = Text::Xslate->new(%params);
         no warnings 'redefine';
         *{"${caller}::create_view"} = sub { $xslate };
         $xslate;
@@ -168,13 +194,9 @@ Create new PSGI application instance.
 You can provide a constructor arguments by configuration.
 Write following lines on your app.psgi.
 
-    sub config {
-        +{
-            'Text::Xslate' => {
-                syntax => 'Kolon'
-            }
-        }
-    }
+    __PACKAGE__->template_options(
+        syntax => 'Kolon',
+    );
 
 =item How can I use other template engines instead of Text::Xslate?
 
