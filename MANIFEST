@@ -8,6 +8,9 @@ META.json
 META.yml
 README
 t/00_compile.t
+t/100_static/01_simple.t
+t/100_static/static/foo
+t/100_static/static/robots.txt
 t/300_setup/04_lite.t
 t/400_lite/01_simple.t
 t/400_lite/02_plugin.psgi

@@ -51,16 +51,13 @@ __PACKAGE__->load_plugins(
 
 use Plack::Session::State::Cookie;
 builder {
-    enable 'Plack::Middleware::Static',
-        path => qr{^(?:/static/|/robot\.txt$|/favicon\.ico$)},
-        root => File::Spec->catdir(dirname(__FILE__));
     enable 'Plack::Middleware::ReverseProxy';
     enable 'Plack::Middleware::Session',
         state => Plack::Session::State::Cookie->new(
             httponly => 1,
         );
 
-    __PACKAGE__->to_app();
+    __PACKAGE__->to_app(handle_static => 1);
 };
 
 __DATA__

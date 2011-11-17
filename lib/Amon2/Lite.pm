@@ -29,6 +29,27 @@ sub import {
         unshift @{"$caller\::ISA"}, $base_class;
     }
 
+    *{"$caller\::to_app"} = sub {
+        my ($class, %opts) = @_;
+
+        my $app = $class->Amon2::Web::to_app();
+        if (delete $opts{handle_static}) {
+            require Plack::Middleware::Static;
+
+            $app = Plack::Middleware::Static->wrap(
+                $app,
+                path => qr{^(?:/static/)},
+                root => File::Spec->catdir( dirname((caller(0))[1]) ),
+            );
+            $app = Plack::Middleware::Static->wrap(
+                $app,
+                path => qr{^(?:/robots\.txt|/favicon\.ico)$},
+                root => File::Spec->catdir( dirname((caller(0))[1]), 'static' ),
+            );
+        }
+        return $app;
+    };
+
     *{"$caller\::router"} = sub { $router };
 
     # any [qw/get post delete/] => '/bye' => sub { ... };
@@ -211,6 +232,13 @@ This is a example to use L<Text::MicroTemplate::File>.
             include_path => ['./tmpl/']
         })
     }
+
+=item How can I handle static files?
+
+If you pass the 'handle_static' option to 'to_app' method, Amon2::Lite handles /static/ path to ./static/ directory.
+
+    use Amon2::Lite;
+    __PACKAGE__->to_app(handle_static => 1);
 
 =back
 
