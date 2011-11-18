@@ -51,7 +51,6 @@ __PACKAGE__->load_plugin('Web::CSRFDefender');
 
 use Plack::Session::State::Cookie;
 builder {
-    enable 'Plack::Middleware::ReverseProxy';
     enable 'Plack::Middleware::Session',
         state => Plack::Session::State::Cookie->new(
             httponly => 1,
