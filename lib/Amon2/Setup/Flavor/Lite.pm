@@ -24,9 +24,6 @@ use lib File::Spec->catdir(dirname(__FILE__), 'lib');
 use Plack::Builder;
 use Amon2::Lite;
 
-# __PACKAGE__->load_plugin('Web::FillInFormLite');
-# __PACKAGE__->load_plugin('Web::JSON');
-
 # put your configuration here
 sub config {
     +{
@@ -48,9 +45,9 @@ __PACKAGE__->add_trigger(
 );
 
 # load plugins
-__PACKAGE__->load_plugins(
-    'Web::CSRFDefender',
-);
+__PACKAGE__->load_plugin('Web::CSRFDefender');
+# __PACKAGE__->load_plugin('Web::FillInFormLite');
+# __PACKAGE__->load_plugin('Web::JSON');
 
 use Plack::Session::State::Cookie;
 builder {
