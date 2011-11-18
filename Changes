@@ -1,5 +1,10 @@
 Revision history for Perl extension Amon2::Lite
 
+0.04
+
+    - added 'handle_static' option.
+    - remove some deps. 
+
 0.03
 
     - added 'template_options' method.

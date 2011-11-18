@@ -2,7 +2,7 @@ package Amon2::Lite;
 use strict;
 use warnings;
 use 5.008008;
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use parent qw/Amon2 Amon2::Web/;
 use Router::Simple 0.04;
