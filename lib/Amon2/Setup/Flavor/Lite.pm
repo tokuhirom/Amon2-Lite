@@ -68,6 +68,12 @@ __DATA__
     <met charst="utf-8">
     <title><% $module %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
+    <style>
+    </style>
+    <script type="text/javascript">
+    </script>
 </head>
 <body>
     <% $module %>
