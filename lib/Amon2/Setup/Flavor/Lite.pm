@@ -24,6 +24,9 @@ use lib File::Spec->catdir(dirname(__FILE__), 'lib');
 use Plack::Builder;
 use Amon2::Lite;
 
+# __PACKAGE__->load_plugin('Web::FillInFormLite');
+# __PACKAGE__->load_plugin('Web::JSON');
+
 # put your configuration here
 sub config {
     +{
@@ -87,12 +90,7 @@ WriteMakefile(
         'Amon2'                           => '<% $amon2_version %>',
         'Amon2::Lite'                     => '<% $amon2_lite_version %>',
         'Text::Xslate'                    => '1.5006',
-        'Time::Piece'                     => '1.20',
-        'HTML::FillInForm::Lite'          => '1.09',
         'Plack::Session'                  => '0.14',
-        'Plack::Middleware::ReverseProxy' => '0.10',
-        'JSON'                            => 2,
-        'Data::Section::Simple'           => '0.03',
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (
