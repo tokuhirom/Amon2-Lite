@@ -244,6 +244,22 @@ If you pass the 'handle_static' option to 'to_app' method, Amon2::Lite handles /
 
 There is a tiny TinyURL example: L<https://github.com/tokuhirom/MyTinyURL/blob/master/app.psgi>.
 
+=item How can I use session?
+
+You can enable session by C<< __PACKAGE__->enable_session() >>. And you can access the session object by C<< $c->session >> accessor.
+
+    use Amon2::Lite;
+
+    get '/' => sub {
+        my $c = shift;
+        my $cnt = $c->session->get('cnt') || 1;
+        $c->session->set('cnt' => $cnt+1);
+        return $c->create_response(200, [], [$cnt]);
+    };
+
+    __PACKAGE__->enable_session(); # 
+    __PACKAGE__->to_app();
+
 =back
 
 =head1 AUTHOR
