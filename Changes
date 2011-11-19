@@ -1,5 +1,16 @@
 Revision history for Perl extension Amon2::Lite
 
+0.06
+
+    * e26e2d3 better coding style
+    * 936a1e4 better static file handling
+    * cbe3fca puts x-nantoka headers by default
+    * b857d56 simplified code
+    * 8e20caa added enable_session method
+    * added enable_middleware method
+    * Return 405 Method Not Allowed if it's not allowed(Old impl returns 404)
+    * 52a9094 docs about session
+
 0.05
 
     [SETUP FLAVOR]
