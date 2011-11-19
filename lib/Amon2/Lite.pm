@@ -240,6 +240,10 @@ If you pass the 'handle_static' option to 'to_app' method, Amon2::Lite handles /
     use Amon2::Lite;
     __PACKAGE__->to_app(handle_static => 1);
 
+=item Where is a example codes?
+
+There is a tiny TinyURL example: L<https://github.com/tokuhirom/MyTinyURL/blob/master/app.psgi>.
+
 =back
 
 =head1 AUTHOR
