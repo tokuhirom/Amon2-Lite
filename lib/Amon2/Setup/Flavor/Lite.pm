@@ -64,11 +64,9 @@ __DATA__
     <title><% $module %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="[% uri_for('/static/js/main.js') %]"></script>
     <link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css">
-    <style>
-    </style>
-    <script type="text/javascript">
-    </script>
+    <link rel="stylesheet" href="[% uri_for('/static/css/main.css') %]">
 </head>
 <body>
     <div class="container">
@@ -80,6 +78,13 @@ __DATA__
     </div>
 </body>
 </html>
+
+@@ /static/js/main.js
+
+@@ /static/css/main.css
+footer {
+    text-align: right;
+}
 ...
 
     $self->write_file('Makefile.PL', <<'...');
