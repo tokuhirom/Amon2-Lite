@@ -21,7 +21,6 @@ use File::Spec;
 use File::Basename;
 use lib File::Spec->catdir(dirname(__FILE__), 'extlib', 'lib', 'perl5');
 use lib File::Spec->catdir(dirname(__FILE__), 'lib');
-use Plack::Builder;
 use Amon2::Lite;
 
 our $VERSION = '0.01';
@@ -57,18 +56,12 @@ __PACKAGE__->add_trigger(
 
 # load plugins
 __PACKAGE__->load_plugin('Web::CSRFDefender');
+# __PACKAGE__->load_plugin('DBI');
 # __PACKAGE__->load_plugin('Web::FillInFormLite');
 # __PACKAGE__->load_plugin('Web::JSON');
 
-use Plack::Session::State::Cookie;
-builder {
-    enable 'Plack::Middleware::Session',
-        state => Plack::Session::State::Cookie->new(
-            httponly => 1,
-        );
-
-    __PACKAGE__->to_app(handle_static => 1);
-};
+__PACKAGE__->enable_session();
+__PACKAGE__->to_app(handle_static => 1);
 
 __DATA__
 
