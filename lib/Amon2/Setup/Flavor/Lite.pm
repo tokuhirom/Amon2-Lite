@@ -78,7 +78,13 @@ __DATA__
     </script>
 </head>
 <body>
-    <% $module %>
+    <div class="container">
+        <header><h1><% $module %></h1></header>
+        <section class="row">
+            This is a <% $module %>
+        </section>
+        <footer>Powered by <a href="http://amon.64p.org/">Amon2::Lite</a></footer>
+    </div>
 </body>
 </html>
 ...
