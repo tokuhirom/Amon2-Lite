@@ -50,6 +50,18 @@ sub import {
                 $app = $klass->wrap($app, %$args);
             }
         }
+        unless ($opts{no_x_content_type_options}) {
+            $class->add_trigger(AFTER_DISPATCH => sub {
+                my ($c, $res) = @_;
+                $res->header( 'X-Content-Type-Options' => 'nosniff' );
+            });
+        }
+        unless ($opts{no_x_frame_options}) {
+            $class->add_trigger(AFTER_DISPATCH => sub {
+                my ($c, $res) = @_;
+                $res->header( 'X-Frame-Options' => 'DENY' );
+            });
+        }
         return $app;
     };
 
@@ -65,6 +77,10 @@ sub import {
         };
         require Plack::Middleware::Session;
         $class->enable_middleware('Plack::Middleware::Session', %args);
+        $class->add_trigger(AFTER_DISPATCH => sub {
+            my ($c, $res) = @_;
+            $res->header('Cache-Control' => 'private');
+        });
     };
 
     *{"$caller\::router"} = sub { $router };
@@ -238,15 +254,37 @@ C<< %args >> would be pass to enabled to C<< Plack::Middleware::Session->new >>.
 
 The default state class is L<Plack::Session::State::Cookie>, and store class is L<Plack::Session::Store::File>.
 
+This option enables a response filter, that adds C< Cache-Control: private > header.
+
 =item [EXPERIMENTAL] __PACKAGE__->enable_middleware($klass, %args)
 
     __PACKAGE__->enable_middleware('Plack::Middleware::XFramework', framework => 'Amon2::Lite');
 
 Enable the Plack middlewares.
 
-=item __PACKAGE__->to_app()
+=item __PACKAGE__->to_app(%args)
 
 Create new PSGI application instance.
+
+There is a options.
+
+=over 4
+
+=item no_x_content_type_options : default false
+
+    __PACKAGE__->to_app(no_x_content_type_options => 1);
+
+Amon2::Lite puts C<< X-Content-Type-Options >> header by default for security reason.
+You can disable this feature by this option.
+
+=item no_x_frame_options
+
+    __PACKAGE__->to_app(no_x_frame_options => 1);
+
+Amon2::Lite puts C<< X-Frame-Options: DENY >> header by default for security reason.
+You can disable this feature by this option.
+
+=back
 
 =back
 

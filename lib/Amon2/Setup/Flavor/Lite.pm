@@ -45,15 +45,6 @@ get '/' => sub {
     return $c->render('index.tt');
 };
 
-# for your security
-__PACKAGE__->add_trigger(
-    AFTER_DISPATCH => sub {
-        my ( $c, $res ) = @_;
-        $res->header( 'X-Content-Type-Options' => 'nosniff' );
-        $res->header( 'X-Frame-Options' => 'DENY' );
-    },
-);
-
 # load plugins
 __PACKAGE__->load_plugin('Web::CSRFDefender');
 # __PACKAGE__->load_plugin('DBI');
