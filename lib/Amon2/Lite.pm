@@ -45,7 +45,7 @@ sub import {
                 my $env = shift;
                 if ((my $content = $vpath->{$env->{PATH_INFO}}) && $env->{PATH_INFO} =~ m{^/}) {
                     my $ct = Plack::MIME->mime_type($env->{PATH_INFO});
-                    return [200, ['Content-Type' => $ct, 'Content-Length' => $content], [$content]];
+                    return [200, ['Content-Type' => $ct, 'Content-Length' => length($content)], [$content]];
                 } elsif ($env->{PATH_INFO} =~ qr{^(?:/robots\.txt|/favicon\.ico)$}) {
                     $app_file_1 ||= Plack::App::File->new({ root => $root1 });
                     return $app_file_1->call($env);
