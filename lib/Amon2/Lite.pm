@@ -34,14 +34,28 @@ sub import {
 
         my $app = $class->Amon2::Web::to_app();
         if (delete $opts{handle_static}) {
-            $class->enable_middleware('Plack::Middleware::Static',
-                path => qr{^(?:/static/)},
-                root => File::Spec->catdir( dirname((caller(0))[1]) ),
-            );
-            $class->enable_middleware('Plack::Middleware::Static',
-                path => qr{^(?:/robots\.txt|/favicon\.ico)$},
-                root => File::Spec->catdir( dirname((caller(0))[1]), 'static' ),
-            );
+            my $vpath = Data::Section::Simple->new($caller)->get_data_section();
+            require Plack::App::File;
+            my $orig_app = $app;
+            my $app_file_1;
+            my $app_file_2;
+            my $root1 = File::Spec->catdir( dirname((caller(0))[1]), 'static' );
+            my $root2 = File::Spec->catdir( dirname((caller(0))[1]) );
+            $app = sub {
+                my $env = shift;
+                if ((my $content = $vpath->{$env->{PATH_INFO}}) && $env->{PATH_INFO} =~ m{^/}) {
+                    my $ct = Plack::MIME->mime_type($env->{PATH_INFO});
+                    return [200, ['Content-Type' => $ct, 'Content-Length' => $content], [$content]];
+                } elsif ($env->{PATH_INFO} =~ qr{^(?:/robots\.txt|/favicon\.ico)$}) {
+                    $app_file_1 ||= Plack::App::File->new({ root => $root1 });
+                    return $app_file_1->call($env);
+                } elsif ($env->{PATH_INFO} =~ m{^/static/}) {
+                    $app_file_2 ||= Plack::App::File->new({ root => $root2 });
+                    return $app_file_2->call($env);
+                } else {
+                    return $orig_app->($env);
+                }
+            };
         }
         if (my @middlewares = @{"${caller}::_MIDDLEWARES"}) {
             for my $middleware (@middlewares) {

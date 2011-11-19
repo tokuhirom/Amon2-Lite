@@ -20,19 +20,29 @@ test_psgi($app, sub {
 
     {
         my $res = $cb->(GET '/');
+        is $res->code, 200;
         is $res->content, 'OK';
     }
 
-    {
+    subtest '/static/foo' => sub {
         my $res = $cb->(GET '/static/foo');
+        is $res->code, 200;
         is $res->content, "bar\n";
-    }
+    };
 
     {
         my $res = $cb->(GET '/robots.txt');
+        is $res->code, 200;
         is $res->content, "DENY *\n";
+    }
+    {
+        my $res = $cb->(GET '/static/foo.js');
+        like $res->content, qr/function/;
     }
 });
 
 done_testing;
+__DATA__
 
+@@ /static/foo.js
+$(function () { });
