@@ -24,6 +24,8 @@ use lib File::Spec->catdir(dirname(__FILE__), 'lib');
 use Plack::Builder;
 use Amon2::Lite;
 
+our $VERSION = '0.01';
+
 # put your configuration here
 sub config {
     +{
@@ -160,6 +162,23 @@ use Test::More;
 eval "use Test::Pod 1.00";
 plan skip_all => "Test::Pod 1.00 required for testing POD" if $@;
 all_pod_files_ok();
+...
+
+    $self->write_file('.gitignore', <<'...');
+Makefile
+inc/
+MANIFEST
+*.bak
+*.old
+nytprof.out
+nytprof/
+*.db
+blib/
+pm_to_blib
+META.json
+META.yml
+MYMETA.json
+MYMETA.yml
 ...
 }
 
