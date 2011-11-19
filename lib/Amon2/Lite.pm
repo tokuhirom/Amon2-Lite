@@ -34,20 +34,37 @@ sub import {
 
         my $app = $class->Amon2::Web::to_app();
         if (delete $opts{handle_static}) {
-            require Plack::Middleware::Static;
-
-            $app = Plack::Middleware::Static->wrap(
-                $app,
+            $class->enable_middleware('Plack::Middleware::Static',
                 path => qr{^(?:/static/)},
                 root => File::Spec->catdir( dirname((caller(0))[1]) ),
             );
-            $app = Plack::Middleware::Static->wrap(
-                $app,
+            $class->enable_middleware('Plack::Middleware::Static',
                 path => qr{^(?:/robots\.txt|/favicon\.ico)$},
                 root => File::Spec->catdir( dirname((caller(0))[1]), 'static' ),
             );
         }
+        if (my @middlewares = @{"${caller}::_MIDDLEWARES"}) {
+            for my $middleware (@middlewares) {
+                my ($klass, $args) = @$middleware;
+                $klass = Plack::Util::load_class($klass, 'Plack::Middleware');
+                $app = $klass->wrap($app, %$args);
+            }
+        }
         return $app;
+    };
+
+    *{"${base_class}::enable_middleware"} = sub {
+        my ($class, $klass, %args) = @_;
+        push @{"${caller}::_MIDDLEWARES"}, [$klass, \%args];
+    };
+    *{"${base_class}::enable_session"} = sub {
+        my ($class, %args) = @_;
+        $args{state} ||= do {
+            require Plack::Session::State::Cookie;
+            Plack::Session::State::Cookie->new(httponly => 1); # for security
+        };
+        require Plack::Middleware::Session;
+        $class->enable_middleware('Plack::Middleware::Session', %args);
     };
 
     *{"$caller\::router"} = sub { $router };
@@ -73,17 +90,30 @@ sub import {
     };
 
     *{"$caller\::get"} = sub {
-        $router->connect($_[0], {code => $_[1]}, {method => ['GET', 'HEAD']});
+        $router->connect($_[0], {code => $_[1], method => ['GET', 'HEAD']});
     };
 
     *{"$caller\::post"} = sub {
-        $router->connect($_[0], {code => $_[1]}, {method => ['POST']});
+        $router->connect($_[0], {code => $_[1], method => ['POST']});
     };
 
     *{"${base_class}\::dispatch"} = sub {
         my ($c) = @_;
         if (my $p = $router->match($c->request->env)) {
-            return $p->{code}->($c, $p);
+            for my $method ( @{ $p->{method} } ) {
+                if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
+                    return $p->{code}->( $c, $p );
+                }
+            }
+            my $content = '405 Method Not Allowed';
+            return $c->create_response(
+                405,
+                [
+                    'Content-Type'   => 'text/plain; charset=utf-8',
+                    'Content-Length' => length($content),
+                ],
+                [$content]
+            );
         } else {
             return $c->res_404();
         }
@@ -151,7 +181,7 @@ __END__
 
 =head1 NAME
 
-Amon2::Lite - Sinatra-ish
+Amon2::Lite - Sinatra-ish framework on Amon2!
 
 =head1 SYNOPSIS
 
@@ -199,6 +229,20 @@ Register new route for router.
 =item __PACKAGE__->load_plugin($name, \%opts)
 
 Load a plugin to the context object.
+
+=item [EXPERIMENTAL] __PACKAGE__->enable_session(%args)
+
+This method enables L<Plack::Middleware::Session>.
+
+C<< %args >> would be pass to enabled to C<< Plack::Middleware::Session->new >>.
+
+The default state class is L<Plack::Session::State::Cookie>, and store class is L<Plack::Session::Store::File>.
+
+=item [EXPERIMENTAL] __PACKAGE__->enable_middleware($klass, %args)
+
+    __PACKAGE__->enable_middleware('Plack::Middleware::XFramework', framework => 'Amon2::Lite');
+
+Enable the Plack middlewares.
 
 =item __PACKAGE__->to_app()
 
