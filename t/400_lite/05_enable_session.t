@@ -25,6 +25,7 @@ my $app = do {
     my $mech = Test::WWW::Mechanize::PSGI->new(app => $app);
     $mech->get_ok('http://localhost/');
     $mech->content_is('1');
+    is($mech->response->header('Cache-Control'), 'private');
     $mech->get_ok('http://localhost/');
     $mech->content_is('2');
 }

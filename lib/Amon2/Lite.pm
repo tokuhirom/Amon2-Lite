@@ -2,7 +2,7 @@ package Amon2::Lite;
 use strict;
 use warnings;
 use 5.008008;
-our $VERSION = '0.05';
+our $VERSION = '0.07';
 
 use parent qw/Amon2 Amon2::Web/;
 use Router::Simple 0.04;
@@ -34,14 +34,28 @@ sub import {
 
         my $app = $class->Amon2::Web::to_app();
         if (delete $opts{handle_static}) {
-            $class->enable_middleware('Plack::Middleware::Static',
-                path => qr{^(?:/static/)},
-                root => File::Spec->catdir( dirname((caller(0))[1]) ),
-            );
-            $class->enable_middleware('Plack::Middleware::Static',
-                path => qr{^(?:/robots\.txt|/favicon\.ico)$},
-                root => File::Spec->catdir( dirname((caller(0))[1]), 'static' ),
-            );
+            my $vpath = Data::Section::Simple->new($caller)->get_data_section();
+            require Plack::App::File;
+            my $orig_app = $app;
+            my $app_file_1;
+            my $app_file_2;
+            my $root1 = File::Spec->catdir( dirname((caller(0))[1]), 'static' );
+            my $root2 = File::Spec->catdir( dirname((caller(0))[1]) );
+            $app = sub {
+                my $env = shift;
+                if ((my $content = $vpath->{$env->{PATH_INFO}}) && $env->{PATH_INFO} =~ m{^/}) {
+                    my $ct = Plack::MIME->mime_type($env->{PATH_INFO});
+                    return [200, ['Content-Type' => $ct, 'Content-Length' => length($content)], [$content]];
+                } elsif ($env->{PATH_INFO} =~ qr{^(?:/robots\.txt|/favicon\.ico)$}) {
+                    $app_file_1 ||= Plack::App::File->new({ root => $root1 });
+                    return $app_file_1->call($env);
+                } elsif ($env->{PATH_INFO} =~ m{^/static/}) {
+                    $app_file_2 ||= Plack::App::File->new({ root => $root2 });
+                    return $app_file_2->call($env);
+                } else {
+                    return $orig_app->($env);
+                }
+            };
         }
         if (my @middlewares = @{"${caller}::_MIDDLEWARES"}) {
             for my $middleware (@middlewares) {
@@ -49,6 +63,18 @@ sub import {
                 $klass = Plack::Util::load_class($klass, 'Plack::Middleware');
                 $app = $klass->wrap($app, %$args);
             }
+        }
+        unless ($opts{no_x_content_type_options}) {
+            $class->add_trigger(AFTER_DISPATCH => sub {
+                my ($c, $res) = @_;
+                $res->header( 'X-Content-Type-Options' => 'nosniff' );
+            });
+        }
+        unless ($opts{no_x_frame_options}) {
+            $class->add_trigger(AFTER_DISPATCH => sub {
+                my ($c, $res) = @_;
+                $res->header( 'X-Frame-Options' => 'DENY' );
+            });
         }
         return $app;
     };
@@ -65,6 +91,10 @@ sub import {
         };
         require Plack::Middleware::Session;
         $class->enable_middleware('Plack::Middleware::Session', %args);
+        $class->add_trigger(AFTER_DISPATCH => sub {
+            my ($c, $res) = @_;
+            $res->header('Cache-Control' => 'private');
+        });
     };
 
     *{"$caller\::router"} = sub { $router };
@@ -77,8 +107,7 @@ sub import {
             my ($methods, $pattern, $code) = @_;
             $router->connect(
                 $pattern,
-                {code => $code},
-                { method => [ map { uc $_ } @$methods ] }
+                {code => $code, method => [ map { uc $_ } @$methods ]},
             );
         } else {
             my ($pattern, $code) = @_;
@@ -100,10 +129,14 @@ sub import {
     *{"${base_class}\::dispatch"} = sub {
         my ($c) = @_;
         if (my $p = $router->match($c->request->env)) {
-            for my $method ( @{ $p->{method} } ) {
-                if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
-                    return $p->{code}->( $c, $p );
+            if ($p->{method}) {
+                for my $method ( @{ $p->{method} } ) {
+                    if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
+                        return $p->{code}->( $c, $p );
+                    }
                 }
+            } else {
+                return $p->{code}->( $c, $p );
             }
             my $content = '405 Method Not Allowed';
             return $c->create_response(
@@ -238,15 +271,37 @@ C<< %args >> would be pass to enabled to C<< Plack::Middleware::Session->new >>.
 
 The default state class is L<Plack::Session::State::Cookie>, and store class is L<Plack::Session::Store::File>.
 
+This option enables a response filter, that adds C< Cache-Control: private > header.
+
 =item [EXPERIMENTAL] __PACKAGE__->enable_middleware($klass, %args)
 
     __PACKAGE__->enable_middleware('Plack::Middleware::XFramework', framework => 'Amon2::Lite');
 
 Enable the Plack middlewares.
 
-=item __PACKAGE__->to_app()
+=item __PACKAGE__->to_app(%args)
 
 Create new PSGI application instance.
+
+There is a options.
+
+=over 4
+
+=item no_x_content_type_options : default false
+
+    __PACKAGE__->to_app(no_x_content_type_options => 1);
+
+Amon2::Lite puts C<< X-Content-Type-Options >> header by default for security reason.
+You can disable this feature by this option.
+
+=item no_x_frame_options
+
+    __PACKAGE__->to_app(no_x_frame_options => 1);
+
+Amon2::Lite puts C<< X-Frame-Options: DENY >> header by default for security reason.
+You can disable this feature by this option.
+
+=back
 
 =back
 
@@ -287,6 +342,22 @@ If you pass the 'handle_static' option to 'to_app' method, Amon2::Lite handles /
 =item Where is a example codes?
 
 There is a tiny TinyURL example: L<https://github.com/tokuhirom/MyTinyURL/blob/master/app.psgi>.
+
+=item How can I use session?
+
+You can enable session by C<< __PACKAGE__->enable_session() >>. And you can access the session object by C<< $c->session >> accessor.
+
+    use Amon2::Lite;
+
+    get '/' => sub {
+        my $c = shift;
+        my $cnt = $c->session->get('cnt') || 1;
+        $c->session->set('cnt' => $cnt+1);
+        return $c->create_response(200, [], [$cnt]);
+    };
+
+    __PACKAGE__->enable_session(); # 
+    __PACKAGE__->to_app();
 
 =back
 
