@@ -1,5 +1,10 @@
 Revision history for Perl extension Amon2::Lite
 
+0.07
+
+    [BUG FIX]
+    - 'any' was broken at 0.06
+
 0.06
 
     * e26e2d3 better coding style
