@@ -107,8 +107,7 @@ sub import {
             my ($methods, $pattern, $code) = @_;
             $router->connect(
                 $pattern,
-                {code => $code},
-                { method => [ map { uc $_ } @$methods ] }
+                {code => $code, method => [ map { uc $_ } @$methods ]},
             );
         } else {
             my ($pattern, $code) = @_;
@@ -130,7 +129,7 @@ sub import {
     *{"${base_class}\::dispatch"} = sub {
         my ($c) = @_;
         if (my $p = $router->match($c->request->env)) {
-            if (@{$p->{method}}) {
+            if ($p->{method}) {
                 for my $method ( @{ $p->{method} } ) {
                     if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
                         return $p->{code}->( $c, $p );
