@@ -130,10 +130,14 @@ sub import {
     *{"${base_class}\::dispatch"} = sub {
         my ($c) = @_;
         if (my $p = $router->match($c->request->env)) {
-            for my $method ( @{ $p->{method} } ) {
-                if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
-                    return $p->{code}->( $c, $p );
+            if (@{$p->{method}}) {
+                for my $method ( @{ $p->{method} } ) {
+                    if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
+                        return $p->{code}->( $c, $p );
+                    }
                 }
+            } else {
+                return $p->{code}->( $c, $p );
             }
             my $content = '405 Method Not Allowed';
             return $c->create_response(

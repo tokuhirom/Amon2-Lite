@@ -10,6 +10,7 @@ my $app = do {
 
     get  '/g' => sub { shift->create_response(200, [], 'get_ok' ) };
     post '/p' => sub { shift->create_response(200, [], 'post_ok') };
+    any  '/a' => sub { shift->create_response(200, [], 'any_ok' ) };
 
     __PACKAGE__->to_app();
 };
@@ -22,6 +23,11 @@ subtest 'normal case' => sub {
 
     $mech->post_ok('http://localhost/p');
     $mech->content_is('post_ok');
+
+    $mech->get_ok('http://localhost/a');
+    $mech->content_is('any_ok');
+    $mech->post_ok('http://localhost/a');
+    $mech->content_is('any_ok');
 };
 subtest 'error case' => sub {
     $mech->post('http://localhost/g');
