@@ -16,7 +16,7 @@ my $build = Module::Build->new(
         'Data::Section::Simple'         => '0.03',
         perl                            => '5.008008',
         'Text::Xslate::Bridge::TT2Like' => '0.00010',
-        'Router::Simple'                => '0.06',
+        'Router::Simple'                => '0.13',
     },
 
     no_index    => { 'directory' => [ 'inc' ] },

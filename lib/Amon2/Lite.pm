@@ -108,6 +108,7 @@ sub import {
             $router->connect(
                 $pattern,
                 {code => $code, method => [ map { uc $_ } @$methods ]},
+                {method => [map { uc $_ } @$methods]},
             );
         } else {
             my ($pattern, $code) = @_;
@@ -119,36 +120,31 @@ sub import {
     };
 
     *{"$caller\::get"} = sub {
-        $router->connect($_[0], {code => $_[1], method => ['GET', 'HEAD']});
+        $router->connect($_[0], {code => $_[1], method => ['GET', 'HEAD']}, {method => 'GET'});
     };
 
     *{"$caller\::post"} = sub {
-        $router->connect($_[0], {code => $_[1], method => ['POST']});
+        $router->connect($_[0], {code => $_[1], method => ['POST']}, {method => ['POST']});
     };
 
     *{"${base_class}\::dispatch"} = sub {
         my ($c) = @_;
         if (my $p = $router->match($c->request->env)) {
-            if ($p->{method}) {
-                for my $method ( @{ $p->{method} } ) {
-                    if ( $method eq $c->request->env->{REQUEST_METHOD} ) {
-                        return $p->{code}->( $c, $p );
-                    }
-                }
-            } else {
-                return $p->{code}->( $c, $p );
-            }
-            my $content = '405 Method Not Allowed';
-            return $c->create_response(
-                405,
-                [
-                    'Content-Type'   => 'text/plain; charset=utf-8',
-                    'Content-Length' => length($content),
-                ],
-                [$content]
-            );
+            return $p->{code}->( $c, $p );
         } else {
-            return $c->res_404();
+            if ($router->method_not_allowed) {
+                my $content = '405 Method Not Allowed';
+                return $c->create_response(
+                    405,
+                    [
+                        'Content-Type'   => 'text/plain; charset=utf-8',
+                        'Content-Length' => length($content),
+                    ],
+                    [$content]
+                );
+            } else {
+                return $c->res_404();
+            }
         }
     };
 
