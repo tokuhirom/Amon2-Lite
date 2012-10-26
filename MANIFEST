@@ -23,6 +23,7 @@ t/400_lite/05_enable_session.t
 t/400_lite/06_enable_middleware.t
 t/400_lite/07_http_method.t
 t/400_lite/08_x_nantoka.t
+t/400_lite/09_get_post.t
 t/TestFlavor.pm
 t/tmpl/foo.mt
 xt/01_podspell.t

@@ -1,5 +1,10 @@
 Revision history for Perl extension Amon2::Lite
 
+0.09
+
+    - Allows "get '/'" and "post '/'" in same router.
+      (Reported by mattn++)
+
 0.08
 
     [bug fix]
