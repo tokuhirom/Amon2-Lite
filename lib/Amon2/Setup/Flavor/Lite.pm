@@ -46,7 +46,9 @@ get '/' => sub {
 };
 
 # load plugins
-__PACKAGE__->load_plugin('Web::CSRFDefender');
+__PACKAGE__->load_plugin('Web::CSRFDefender' => {
+    post_only => 1,
+});
 # __PACKAGE__->load_plugin('DBI');
 # __PACKAGE__->load_plugin('Web::FillInFormLite');
 # __PACKAGE__->load_plugin('Web::JSON');
