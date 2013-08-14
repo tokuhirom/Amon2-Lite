@@ -1,5 +1,7 @@
 Revision history for Perl extension Amon2::Lite
 
+{{$NEXT}}
+
 0.09
 
     - Allows "get '/'" and "post '/'" in same router.

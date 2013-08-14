@@ -206,6 +206,8 @@ sub import {
 1;
 __END__
 
+=for stopwords TinyURL
+
 =encoding utf8
 
 =head1 NAME
@@ -241,25 +243,25 @@ B<THIS MODULE IS BETA STATE. API MAY CHANGE WITHOUT NOTICE>.
 
 =over 4
 
-=item any(\@methods, $path, \&code)
+=item C<< any(\@methods, $path, \&code) >>
 
-=item any($path, \&code)
-
-Register new route for router.
-
-=item get($path, $code->($c))
+=item C<< any($path, \&code) >>
 
 Register new route for router.
 
-=item post($path, $code->($c))
+=item C<< get($path, $code->($c)) >>
 
 Register new route for router.
 
-=item __PACKAGE__->load_plugin($name, \%opts)
+=item C<< post($path, $code->($c)) >>
+
+Register new route for router.
+
+=item C<< __PACKAGE__->load_plugin($name, \%opts) >>
 
 Load a plugin to the context object.
 
-=item [EXPERIMENTAL] __PACKAGE__->enable_session(%args)
+=item [EXPERIMENTAL] C<< __PACKAGE__->enable_session(%args) >>
 
 This method enables L<Plack::Middleware::Session>.
 
@@ -269,13 +271,13 @@ The default state class is L<Plack::Session::State::Cookie>, and store class is 
 
 This option enables a response filter, that adds C< Cache-Control: private > header.
 
-=item [EXPERIMENTAL] __PACKAGE__->enable_middleware($klass, %args)
+=item [EXPERIMENTAL] C<< __PACKAGE__->enable_middleware($klass, %args) >>
 
     __PACKAGE__->enable_middleware('Plack::Middleware::XFramework', framework => 'Amon2::Lite');
 
 Enable the Plack middlewares.
 
-=item __PACKAGE__->to_app(%args)
+=item C<< __PACKAGE__->to_app(%args) >>
 
 Create new PSGI application instance.
 
@@ -283,14 +285,14 @@ There is a options.
 
 =over 4
 
-=item no_x_content_type_options : default false
+=item C<< no_x_content_type_options : default false >>
 
     __PACKAGE__->to_app(no_x_content_type_options => 1);
 
 Amon2::Lite puts C<< X-Content-Type-Options >> header by default for security reason.
 You can disable this feature by this option.
 
-=item no_x_frame_options
+=item C<< no_x_frame_options >>
 
     __PACKAGE__->to_app(no_x_frame_options => 1);
 
