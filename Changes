@@ -2,6 +2,11 @@ Revision history for Perl extension Amon2::Lite
 
 {{$NEXT}}
 
+0.10 2013-08-14T01:14:41Z
+
+    - minil migrate
+      (tokuhirom)
+
 0.09
 
     - Allows "get '/'" and "post '/'" in same router.
