@@ -10,7 +10,7 @@ requires 'Plack::App::File';
 requires 'Plack::Middleware::Session';
 requires 'Plack::Session::State::Cookie';
 requires 'Router::Simple', '0.13';
-requires 'Text::Xslate';
+requires 'Text::Xslate', '2.0010'; # 2.0010+ gets Perl 5.18+ compatibility
 requires 'Text::Xslate::Bridge::TT2Like', '0.00010';
 
 on test => sub {
