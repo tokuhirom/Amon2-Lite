@@ -3,12 +3,13 @@ use warnings;
 use utf8;
 
 package Amon2::Setup::Flavor::Lite;
-use parent qw/Amon2::Setup::Flavor/;
-use Amon2::Lite;
-use Amon2;
+use parent qw(Amon2::Setup::Flavor);
 
 sub run {
     my ($self) = @_;
+
+    require Amon2::Lite;
+    require Amon2;
 
     $self->{amon2_version}      = $Amon2::VERSION;
     $self->{amon2_lite_version} = $Amon2::Lite::VERSION;
@@ -23,7 +24,7 @@ use lib File::Spec->catdir(dirname(__FILE__), 'extlib', 'lib', 'perl5');
 use lib File::Spec->catdir(dirname(__FILE__), 'lib');
 use Amon2::Lite;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 # put your configuration here
 sub load_config {

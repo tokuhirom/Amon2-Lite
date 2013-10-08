@@ -2,6 +2,15 @@ Revision history for Perl extension Amon2::Lite
 
 {{$NEXT}}
 
+0.11 2013-10-08T23:29:10Z
+
+    - Amon2::Lite with Text::Xslate 2.0010- gets Perl 5.18+ issue.
+      Just updated deps.
+      ref. http://blog.64p.org/entry/2013/10/08/093236
+      (tokuhirom)
+    - Tiny fix for Amon2 5.00 compatibility.
+      (tokuhirom)
+
 0.10 2013-08-14T01:14:41Z
 
     - minil migrate

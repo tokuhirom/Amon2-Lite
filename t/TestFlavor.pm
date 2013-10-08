@@ -14,10 +14,10 @@ use Plack::Util;
 use Test::More;
 
 sub test_flavor {
-    my ($code, $flavor) = @_;
+    my ($code, $flavor_class) = @_;
 
 	local $ENV{PLACK_ENV} = 'development';
-    $flavor = Plack::Util::load_class($flavor, 'Amon2::Setup::Flavor');
+    $flavor_class = Plack::Util::load_class($flavor_class, 'Amon2::Setup::Flavor');
 
     my $libpath = File::Spec->rel2abs(File::Spec->catfile(dirname(__FILE__), '..', '..', 'lib'));
     unshift @INC, $libpath;
@@ -28,7 +28,8 @@ sub test_flavor {
     note $dir;
 
     {
-        $flavor->new(module => 'My::App')->run;
+        my $flavor = $flavor_class->new(module => 'My::App');
+        $flavor->run;
         $code->($flavor);
 
         # run prove
