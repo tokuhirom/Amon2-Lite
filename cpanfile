@@ -24,4 +24,6 @@ on test => sub {
     requires 'HTTP::Response';
     requires 'Plack::Test';
     requires 'Plack::Util';
+    requires 'Test::WWW::Mechanize';
+    requires 'Tiffany';
 };
