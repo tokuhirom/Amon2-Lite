@@ -34,7 +34,7 @@ sub load_config {
 
     +{
         'DBI' => [
-            'dbi:SQLite:dbname=$mode.db',
+            "dbi:SQLite:dbname=$mode.db",
             '',
             '',
         ],
