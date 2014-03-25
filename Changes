@@ -2,6 +2,13 @@ Revision history for Perl extension Amon2::Lite
 
 {{$NEXT}}
 
+0.12 2014-03-25T01:06:43Z
+
+    - Fix default DB name to expand environment name
+      (moznion)
+    - Fixed testing issues
+      (Kosuke Asami)
+
 0.11 2013-10-08T23:29:10Z
 
     - Amon2::Lite with Text::Xslate 2.0010- gets Perl 5.18+ issue.

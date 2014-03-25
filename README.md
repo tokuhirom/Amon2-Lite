@@ -48,11 +48,11 @@ __THIS MODULE IS BETA STATE. API MAY CHANGE WITHOUT NOTICE__.
 
 - \[EXPERIMENTAL\] `__PACKAGE__->enable_session(%args)`
 
-    This method enables [Plack::Middleware::Session](http://search.cpan.org/perldoc?Plack::Middleware::Session).
+    This method enables [Plack::Middleware::Session](https://metacpan.org/pod/Plack::Middleware::Session).
 
     `%args` would be pass to enabled to `Plack::Middleware::Session->new`.
 
-    The default state class is [Plack::Session::State::Cookie](http://search.cpan.org/perldoc?Plack::Session::State::Cookie), and store class is [Plack::Session::Store::File](http://search.cpan.org/perldoc?Plack::Session::Store::File).
+    The default state class is [Plack::Session::State::Cookie](https://metacpan.org/pod/Plack::Session::State::Cookie), and store class is [Plack::Session::Store::File](https://metacpan.org/pod/Plack::Session::Store::File).
 
     This option enables a response filter, that adds ` Cache-Control: private ` header.
 
@@ -97,7 +97,7 @@ __THIS MODULE IS BETA STATE. API MAY CHANGE WITHOUT NOTICE__.
 
     You can use any template engine with Amon2::Lite. You can overwrite create\_view method same as normal Amon2.
 
-    This is a example to use [Text::MicroTemplate::File](http://search.cpan.org/perldoc?Text::MicroTemplate::File).
+    This is a example to use [Text::MicroTemplate::File](https://metacpan.org/pod/Text::MicroTemplate::File).
 
         use Tiffany::Text::MicroTemplate::File;
 
