@@ -24,7 +24,7 @@ use lib File::Spec->catdir(dirname(__FILE__), 'extlib', 'lib', 'perl5');
 use lib File::Spec->catdir(dirname(__FILE__), 'lib');
 use Amon2::Lite;
 
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 # put your configuration here
 sub load_config {

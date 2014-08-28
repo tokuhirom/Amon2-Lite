@@ -25,7 +25,7 @@ Amon2::Lite - Sinatra-ish framework on Amon2!
 
 This is a Sinatra-ish wrapper for Amon2.
 
-__THIS MODULE IS BETA STATE. API MAY CHANGE WITHOUT NOTICE__.
+**THIS MODULE IS BETA STATE. API MAY CHANGE WITHOUT NOTICE**.
 
 # FUNCTIONS
 
