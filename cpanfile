@@ -4,6 +4,7 @@ requires 'Amon2', '3.25';
 requires 'Amon2::Config::Simple';
 requires 'Amon2::Setup::Flavor';
 requires 'Amon2::Web';
+requires 'Amon2::Plugin::Web::CSRFDefender';
 requires 'Data::Section::Simple', '0.03';
 requires 'parent';
 requires 'Plack::App::File';
